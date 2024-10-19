@@ -8,6 +8,8 @@ const Dashboard: React.FC = () => {
   const [proyectos, setProyectos] = useState<Proyecto[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProyectos, setTotalProyectos] = useState();
+  const [totalUsuarios, setTotalUsuarios] = useState();
+  const [totalCasos, setTotalCasos] = useState();
   const itemsPerPage = 8;
 
   // Obtener datos del usuario desde el almacenamiento local
@@ -45,7 +47,37 @@ const Dashboard: React.FC = () => {
       }
     };
 
+    const fetchUserCount = async () => {
+      try {
+        const response = await fetch("/api/auth/count"); // URL de tu endpoint para obtener el conteo
+        if (response.ok) {
+          const data = await response.json();
+          setTotalUsuarios(data.total); // Guardar el total de proyectos en el estado
+        } else {
+          console.error("Error fetching project count");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    const fecthCasoCount = async () => {
+      try {
+        const response = await fetch("/api/casos/count");
+        if (response.ok) {
+          const data = await response.json();
+          setTotalCasos(data.total_casos);
+        } else {
+          console.error("Error fetching casos count");
+        }
+      } catch (error) {
+        console.error("Error: ", error);
+      }
+    };
+
+    fetchUserCount();
     fetchProjectCount();
+    fecthCasoCount();
     fetchProyectos();
   }, []);
 
@@ -129,12 +161,12 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-2">Colaboradores</h3>
-            <p className="text-3xl font-bold">1,893</p>
+            <p className="text-3xl font-bold">{totalUsuarios}</p>
             <p className="text-red-500 mt-1">-1% este mes</p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-2">Casos</h3>
-            <p className="text-3xl font-bold">189</p>
+            <p className="text-3xl font-bold">{totalCasos}</p>
             <div className="flex mt-2 space-x-2">
               {/* Ejemplo de avatares */}
               <img

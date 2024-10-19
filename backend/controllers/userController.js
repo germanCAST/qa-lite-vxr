@@ -28,6 +28,17 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+const contarUsuarios = async (req, res, next) => {
+  try {
+    const result = await pool.query("SELECT COUNT(*) FROM public.usuarios");
+    const count = result.rows[0].count;
+    res.status(200).json({ total: parseInt(count, 10) });
+  } catch (error) {
+    next(err);
+  }
+};
+
 module.exports = {
   loginUser,
+  contarUsuarios,
 };
