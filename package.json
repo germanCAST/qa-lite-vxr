@@ -1,0 +1,16 @@
+{
+  "name": "qa-lite-vxr",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm run dev"
+  },
+  "dependencies": {
+    "pg": "^8.13.0"
+  }
+}
