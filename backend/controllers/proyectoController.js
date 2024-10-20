@@ -5,8 +5,8 @@ const obtenerProyectos = async (req, res, next) => {
     const result = await pool.query(`
       SELECT 
         p.id, 
-        p.nombre, 
-        p.descripcion, 
+        p.nombre as proyecto_nombre, 
+        p.descripcion as proyecto_descripcion, 
         p.fecha_inicio, 
         p.fecha_fin, 
         p.estado, 

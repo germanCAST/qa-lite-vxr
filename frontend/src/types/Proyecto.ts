@@ -1,9 +1,32 @@
+export interface Defecto {
+  id: number;
+  descripcion: string;
+  estado: string;
+  prioridad: string;
+}
+
+export interface CasoPrueba {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  estado: string;
+  defectos: Defecto[];
+}
+
+export interface CasoUso {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  casosPrueba: CasoPrueba[];
+}
+
 export interface Proyecto {
   id: number;
-  nombre: string;
-  descripcion: string;
+  proyecto_nombre: string;
+  proyecto_descripcion: string;
   estado: string;
   fecha_inicio: string;
   fecha_fin: string;
   creado_por: string;
+  casosUso: CasoUso[];
 }
