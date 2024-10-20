@@ -3,17 +3,12 @@ import { HiX } from "react-icons/hi";
 
 import { calculateProgress } from "./utils/calculateProgress";
 import ProgressBar from "@ramonak/react-progress-bar";
+import { Proyecto } from "../../types/Proyecto";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  project: {
-    nombre: string;
-    descripcion: string;
-    creado_por: string;
-    fecha_inicio: string;
-    fecha_fin: string;
-  } | null;
+  project: Proyecto | null;
 }
 
 const ViewModal: React.FC<ModalProps> = ({
@@ -27,7 +22,7 @@ const ViewModal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">{proyecto.nombre}</h2>
+          <h2 className="text-xl font-bold">{proyecto.proyecto_nombre}</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-100"
@@ -50,7 +45,7 @@ const ViewModal: React.FC<ModalProps> = ({
         </p>
         <p className="py-4">
           <strong>Descripción</strong>
-          <div>{proyecto.descripcion}</div>
+          <div>{proyecto.proyecto_descripcion}</div>
         </p>
         <p className="py-4">
           <strong>Creado por</strong>
@@ -59,7 +54,20 @@ const ViewModal: React.FC<ModalProps> = ({
 
         <p className="py-4">
           <strong>Casos del proyecto</strong>
-          <div>casos</div>
+          <div>
+            {proyecto.casosUso && proyecto.casosUso.length > 0 ? (
+              proyecto.casosUso.map((caso) => (
+                <div key={caso.id}>
+                  <h4>
+                    Caso de Uso {caso.id}: {caso.titulo}
+                  </h4>
+                  <p>{caso.descripcion}</p>
+                </div>
+              ))
+            ) : (
+              <p>No hay casos de uso para este proyecto.</p>
+            )}
+          </div>
         </p>
 
         <button

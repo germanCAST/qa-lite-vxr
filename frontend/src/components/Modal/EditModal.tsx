@@ -1,15 +1,10 @@
 import React from "react";
+import { Proyecto } from "../../types/Proyecto";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  project: {
-    nombre: string;
-    descripcion: string;
-    creado_por: string;
-    fecha_inicio: string;
-    fecha_fin: string;
-  } | null;
+  project: Proyecto | null;
 }
 
 const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
@@ -19,7 +14,7 @@ const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">{project.nombre}</h2>
+          <h2 className="text-xl font-bold">{project.proyecto_nombre}</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-100"
@@ -28,7 +23,7 @@ const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
           </button>
         </div>
         <p>
-          <strong>Descripción:</strong> {project.descripcion}
+          <strong>Descripción:</strong> {project.proyecto_descripcion}
         </p>
         <p>
           <strong>Creado por:</strong> {project.creado_por}

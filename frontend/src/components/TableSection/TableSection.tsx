@@ -58,12 +58,14 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
               {proyectos.length > 0 ? (
                 proyectos.map((proyecto) => (
                   <tr key={proyecto.id}>
-                    <td className="px-4 py-4 border-b">{proyecto.nombre}</td>
+                    <td className="px-4 py-4 border-b">
+                      {proyecto.proyecto_nombre}
+                    </td>
                     <td
                       className="px-4 py-4 border-b max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
-                      title={proyecto.descripcion}
+                      title={proyecto.proyecto_descripcion}
                     >
-                      {proyecto.descripcion}
+                      {proyecto.proyecto_descripcion}
                     </td>
                     <td className="px-4 py-2 border-b">
                       <EstadoTag estado={proyecto.estado} />
