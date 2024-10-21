@@ -4,21 +4,21 @@ const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const result = await pool.query(
-      "SELECT * FROM public.usuarios WHERE correo_electronico = $1 AND contrasena = $2",
-      [email, password]
-    );
+    const query = `
+    SELECT id, 
+    nombre as name, 
+    apellido as lastname,
+    correo_electronico as email,
+    rol as type
+    FROM public.usuarios
+     WHERE correo_electronico = $1 AND contrasena = $2
+    `;
+    const result = await pool.query(query, [email, password]);
 
     if (result.rows.length > 0) {
       const user = result.rows[0];
       res.status(200).json({
-        message: "Autenticación exitosa",
-        user: {
-          name: user.nombre + " " + user.apellido,
-          username: user.nombre_usuario,
-          email: user.correo_electronico,
-          userType: user.rol,
-        },
+        user,
       });
     } else {
       res.status(401).json({ error: "Credenciales incorrectas" });
@@ -38,7 +38,19 @@ const contarUsuarios = async (req, res, next) => {
   }
 };
 
+const getAllUsuarios = async (req, res, next) => {
+  try {
+    const result = await pool.query(
+      "SELECT nombre as name, apellido as lastname FROM public.usuarios"
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   loginUser,
   contarUsuarios,
+  getAllUsuarios,
 };
