@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Proyecto } from "../../types/Proyecto";
+import { CasoPrueba, CasoUso, Proyecto } from "../../types/Proyecto";
 import { format } from "date-fns";
 import { EditModal, EstadoTag, ViewModal } from "../index";
 import { HiEye, HiPencilAlt, HiTrash } from "react-icons/hi";
+import LoadingModal from "../Modal/LoadingModal";
+import { getCasosUsoByID } from "./utils/getCasosUsoByID";
+import { getCasosPruebaByID } from "./utils/getCasosPruebaByID";
 
 interface TableSectionProps {
   proyectos: Proyecto[];
@@ -10,12 +13,36 @@ interface TableSectionProps {
 
 const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
   const [selectedProject, setSelectedProject] = useState<Proyecto | null>(null);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedProjectCasosUso, setSelectedProjectCasosUso] = useState<
+    CasoUso[] | null
+  >(null);
+  const [selectedProjectCasosPrueba, setSelectedProjectCasosPrueba] = useState<
+    CasoPrueba[] | null
+  >(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
-  const openViewModal = (project: Proyecto) => {
-    setSelectedProject(project);
-    setIsViewModalOpen(true);
+  const openViewModal = async (project: Proyecto) => {
+    try {
+      setIsLoading(true);
+
+      const ProjectCasosUso = await getCasosUsoByID(project.id);
+      const ProjectCasosPrueba = await getCasosPruebaByID(project.id);
+
+      if (ProjectCasosUso !== null && ProjectCasosPrueba !== null) {
+        setSelectedProjectCasosUso(ProjectCasosUso);
+        setSelectedProjectCasosPrueba(ProjectCasosPrueba);
+      } else {
+        setSelectedProjectCasosUso(null);
+        setSelectedProjectCasosPrueba(null);
+      }
+      setSelectedProject(project);
+      setIsViewModalOpen(true);
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLoading(false);
   };
 
   const closeViewModal = () => {
@@ -35,6 +62,10 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
 
   return (
     <>
+      <LoadingModal
+        isOpen={isLoading}
+        message="Obteniendo detalles del proyecto..."
+      />
       <section className="w-full bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-bold mb-4">Proyectos</h3>
         <div className="overflow-x-auto">
@@ -123,6 +154,8 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
         isOpen={isViewModalOpen}
         onClose={closeViewModal}
         project={selectedProject}
+        casosDeUso={selectedProjectCasosUso ?? null}
+        casosDePrueba={selectedProjectCasosPrueba ?? null}
       />
       <EditModal
         isOpen={isEditModalOpen}

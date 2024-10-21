@@ -12,15 +12,22 @@ const contarCasos = async (req, res, next) => {
 
 const casosUsoById = async (req, res, next) => {
   const proyectoId = req.params.id;
+
+  if (!proyectoId) {
+    return res
+      .status(400)
+      .json({ error: "El ID del proyecto es requerido", data: null });
+  }
+
   try {
     const query = `
     SELECT 
           p.id AS proyecto_id, 
           p.nombre AS proyecto_nombre, 
-          p.estado, 
-          cu.id AS caso_uso_id,
-          cu.titulo AS caso_uso_titulo,
-          cu.descripcion AS caso_uso_descripcion,
+          p.estado AS proyecto_estado, 
+          cu.id,
+          cu.titulo,
+          cu.descripcion,
           cp.id AS caso_prueba_id,
           cp.titulo AS caso_prueba_titulo,
           cp.descripcion AS caso_prueba_descripcion,
@@ -46,10 +53,64 @@ const casosUsoById = async (req, res, next) => {
     `;
 
     const result = await pool.query(query, [proyectoId]);
+
+    if (result.rows[0].caso_prueba_estado === null) {
+      return res
+        .status(200)
+        .json({ error: "No existen casos de uso", data: null });
+    }
+
     res.status(200).json(result.rows);
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { contarCasos, casosUsoById };
+const casosPruebaById = async (req, res, next) => {
+  const proyectoId = req.params.id;
+
+  if (!proyectoId) {
+    return res
+      .status(400)
+      .json({ error: "El ID del proyecto es requerido", data: null });
+  }
+
+  try {
+    const query = `
+    SELECT 
+        cp.id,
+        cp.titulo,
+        cp.descripcion,
+        cp.estado
+    FROM 
+        public.proyectos p
+    JOIN 
+        public.usuarios u ON p.creado_por = u.id
+    LEFT JOIN 
+        public.casos_uso cu ON cu.id_proyecto = p.id
+    LEFT JOIN 
+        public.casos_prueba cp ON cp.id_caso_uso = cu.id
+    LEFT JOIN 
+        public.defectos d ON d.id_caso_prueba = cp.id
+    WHERE 
+        p.id = $1
+    ORDER BY 
+        p.id, cu.id, cp.id, d.id;
+
+    `;
+
+    const result = await pool.query(query, [proyectoId]);
+
+    if (result.rows[0].id === null) {
+      return res
+        .status(200)
+        .json({ error: "No existen casos de prueba", data: null });
+    }
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { contarCasos, casosUsoById, casosPruebaById };

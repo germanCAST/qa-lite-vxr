@@ -3,18 +3,22 @@ import { HiX } from "react-icons/hi";
 
 import { calculateProgress } from "./utils/calculateProgress";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { Proyecto } from "../../types/Proyecto";
+import { CasoPrueba, CasoUso, Proyecto } from "../../types/Proyecto";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   project: Proyecto | null;
+  casosDeUso: CasoUso[] | null;
+  casosDePrueba: CasoPrueba[] | null;
 }
 
 const ViewModal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   project: proyecto,
+  casosDeUso: casosDeUso,
+  casosDePrueba: casosDePrueba,
 }) => {
   if (!isOpen || !proyecto) return null;
   const progress = calculateProgress(proyecto.fecha_inicio, proyecto.fecha_fin);
@@ -53,21 +57,69 @@ const ViewModal: React.FC<ModalProps> = ({
         </p>
 
         <p className="py-4">
-          <strong>Casos del proyecto</strong>
-          <div>
-            {proyecto.casosUso && proyecto.casosUso.length > 0 ? (
-              proyecto.casosUso.map((caso) => (
-                <div key={caso.id}>
-                  <h4>
-                    Caso de Uso {caso.id}: {caso.titulo}
-                  </h4>
-                  <p>{caso.descripcion}</p>
-                </div>
-              ))
+          <strong>Casos de uso generados</strong>
+          <td colSpan={2}>
+            {" "}
+            {casosDeUso ? (
+              <table className="min-w-full bg-white dark:bg-gray-800 border-collapse">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2 border-b text-left">Título</th>
+                    <th className="px-4 py-2 border-b text-left">
+                      Descripción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {casosDeUso.map((caso) => (
+                    <tr key={caso.id}>
+                      <td className="px-4 py-2 border-b">{caso.titulo}</td>
+                      <td className="px-4 py-2 border-b">{caso.descripcion}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
-              <p>No hay casos de uso para este proyecto.</p>
+              <p className="px-4 py-2">
+                No hay casos de uso para este proyecto.
+              </p>
             )}
-          </div>
+          </td>
+        </p>
+
+        <p className="py-4">
+          <strong>Casos de prueba generados</strong>
+          <td colSpan={2}>
+            {" "}
+            {casosDePrueba ? (
+              <table className="min-w-full bg-white dark:bg-gray-800 border-collapse">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2 border-b text-left">Título</th>
+                    <th className="px-4 py-2 border-b text-left">
+                      Descripción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {casosDePrueba.map((casoPrueba) => (
+                    <tr key={casoPrueba.id}>
+                      <td className="px-4 py-2 border-b">
+                        {casoPrueba.titulo}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {casoPrueba.descripcion}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="px-4 py-2">
+                No hay casos de uso para este proyecto.
+              </p>
+            )}
+          </td>
         </p>
 
         <button
