@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { CasoPrueba, CasoUso, Proyecto } from "../../types/Proyecto";
+import { CasoPrueba, CasoUso, Defecto, Proyecto } from "../../types/Proyecto";
 import { format } from "date-fns";
 import { EditModal, EstadoTag, ViewModal } from "../index";
 import { HiEye, HiPencilAlt, HiTrash } from "react-icons/hi";
 import LoadingModal from "../Modal/LoadingModal";
 import { getCasosUsoByID } from "./utils/getCasosUsoByID";
 import { getCasosPruebaByID } from "./utils/getCasosPruebaByID";
+import { getDefectosByID } from "./utils/getDefectosByID";
 
 interface TableSectionProps {
   proyectos: Proyecto[];
@@ -19,6 +20,9 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
   const [selectedProjectCasosPrueba, setSelectedProjectCasosPrueba] = useState<
     CasoPrueba[] | null
   >(null);
+  const [selectedProjectDefectos, setSelectedProjectDefectos] = useState<
+    Defecto[] | null
+  >(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
@@ -29,14 +33,26 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
 
       const ProjectCasosUso = await getCasosUsoByID(project.id);
       const ProjectCasosPrueba = await getCasosPruebaByID(project.id);
+      const ProjectDefectos = await getDefectosByID(project.id);
 
-      if (ProjectCasosUso !== null && ProjectCasosPrueba !== null) {
+      if (ProjectCasosUso !== null) {
         setSelectedProjectCasosUso(ProjectCasosUso);
-        setSelectedProjectCasosPrueba(ProjectCasosPrueba);
       } else {
         setSelectedProjectCasosUso(null);
+      }
+
+      if (ProjectCasosPrueba !== null) {
+        setSelectedProjectCasosPrueba(ProjectCasosPrueba);
+      } else {
         setSelectedProjectCasosPrueba(null);
       }
+
+      if (ProjectDefectos !== null) {
+        setSelectedProjectDefectos(ProjectDefectos);
+      } else {
+        setSelectedProjectDefectos(null);
+      }
+
       setSelectedProject(project);
       setIsViewModalOpen(true);
     } catch (error) {
@@ -156,6 +172,7 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
         project={selectedProject}
         casosDeUso={selectedProjectCasosUso ?? null}
         casosDePrueba={selectedProjectCasosPrueba ?? null}
+        defectos={selectedProjectDefectos ?? null}
       />
       <EditModal
         isOpen={isEditModalOpen}

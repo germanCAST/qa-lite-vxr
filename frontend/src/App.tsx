@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import "./App.css";
 import { useEffect } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
-import CreateProject from "./components/CreateProject/CreateProject";
+import CreateProject from "./pages/CreateProject/CreateProject";
 import Layout from "./components/Layout/Layout";
 
 function App() {
