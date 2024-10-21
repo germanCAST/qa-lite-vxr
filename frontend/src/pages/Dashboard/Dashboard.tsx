@@ -25,6 +25,7 @@ const Dashboard: React.FC = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
 
+    console.log(JSON.parse(storedUser!));
     const fetchAllData = async () => {
       try {
         setLoading(true);
@@ -88,7 +89,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen w-full flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <main className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <Header userName={user?.name || "Usuario"} />
+        <Header userName={user?.name + " " + user?.lastname || "Usuario"} />
         <CardsSection
           totalProyectos={totalProyectos}
           totalUsuarios={totalUsuarios}

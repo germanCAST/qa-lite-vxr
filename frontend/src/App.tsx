@@ -1,6 +1,6 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import "./App.css";
 import { useEffect } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
