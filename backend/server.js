@@ -12,11 +12,13 @@ app.use(express.static(path.join(__dirname, "../frontend/dist")));
 const proyectoRoutes = require("./routes/proyectoRoutes");
 const userRoutes = require("./routes/userRoutes");
 const casoRoutes = require("./routes/casoRoutes");
+const defectoRoutes = require("./routes/defectoRoutes");
 
 // Usar rutas
 app.use("/api/data/proyectos", proyectoRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api/casos", casoRoutes);
+app.use("/api/defectos", defectoRoutes);
 
 // Middleware para manejar rutas no encontradas (404)
 const notFoundHandler = require("./middleware/notFoundHandler");
