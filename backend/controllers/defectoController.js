@@ -34,8 +34,7 @@ const defectosById = async (req, res, next) => {
     `;
 
     const result = await pool.query(query, [proyectoId]);
-    //controlar que si no retorna nada de un 200 y muestre que
-    console.log(result);
+
     if (result.rows.length <= 0) {
       return res.status(200).json({
         error: "No se encontraron defectos creados del proyecto",

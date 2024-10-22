@@ -27,8 +27,8 @@ const obtenerProyectos = async (req, res, next) => {
 const updateProyecto = async (req, res, next) => {
   const {
     id,
-    nombre,
-    descripcion,
+    proyecto_nombre,
+    proyecto_descripcion,
     fecha_inicio,
     fecha_fin,
     estado,
@@ -41,15 +41,15 @@ const updateProyecto = async (req, res, next) => {
       descripcion = $2,
       fecha_inicio = $3,
       fecha_fin = $4,
-      estado = $5
+      estado = $5,
       creado_por = $6
     WHERE 
       id = $7;
   `;
 
   const values = [
-    nombre,
-    descripcion,
+    proyecto_nombre,
+    proyecto_descripcion,
     fecha_inicio,
     fecha_fin,
     estado,
@@ -59,7 +59,7 @@ const updateProyecto = async (req, res, next) => {
 
   try {
     const result = await pool.query(query, values);
-    console.log("Proyecto actualizado con éxito");
+    console.log("Proyecto actualizado con éxito", result);
   } catch (error) {
     console.error("Error actualizando el proyecto:", error);
   }

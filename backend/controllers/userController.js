@@ -41,7 +41,7 @@ const contarUsuarios = async (req, res, next) => {
 const getAllUsuarios = async (req, res, next) => {
   try {
     const result = await pool.query(
-      "SELECT nombre as name, apellido as lastname FROM public.usuarios"
+      "SELECT id, nombre as name, apellido as lastname FROM public.usuarios"
     );
     res.status(200).json(result.rows);
   } catch (error) {
