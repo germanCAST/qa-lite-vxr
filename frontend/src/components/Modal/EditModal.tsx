@@ -4,20 +4,24 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Proyecto } from "../../types/Proyecto";
 import { Usuario } from "../../types";
 import { HiX } from "react-icons/hi";
+import { getAllUsuarios } from "./utils/getAllUsuarios";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   project: Proyecto | null;
-  onSave?: (updatedProject: Proyecto) => void;
 }
 
-const EditModal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  project,
-  onSave,
-}) => {
+interface editableProject {
+  id: number;
+  proyecto_nombre: string;
+  proyecto_descripcion: string;
+  estado: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+}
+
+const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
   const [editableProject, setEditableProject] = useState<Proyecto>(
     project ?? {
       id: 0,
@@ -51,6 +55,27 @@ const EditModal: React.FC<ModalProps> = ({
     }));
   };
 
+  const onSave = async (editableProject: editableProject) => {
+    try {
+      console.log(editableProject);
+      const response = await fetch("/api/data/proyectos/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editableProject),
+      });
+      if (response.ok) {
+        const data = await response.json(); // Procesa la respuesta
+        console.log("Proyecto guardado exitosamente:", data);
+      } else {
+        console.error("Error al guardar el proyecto:", response.statusText);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleSave = () => {
     if (onSave) {
       onSave(editableProject);
@@ -61,9 +86,9 @@ const EditModal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const response = await fetch("/api/auth/getAllUsuarios");
-        if (response.ok) {
-          const data = await response.json();
+        const response = await getAllUsuarios();
+        if (response) {
+          const data = await response;
           setUsuarios(data);
         } else {
           console.error("Error al obtener los usuarios");
@@ -194,6 +219,32 @@ const EditModal: React.FC<ModalProps> = ({
               />
             </div>
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="estado" className="block font-semibold">
+            Estado del proyecto
+          </label>
+          <select
+            id="estado"
+            name="estado"
+            value={editableProject.estado}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+          >
+            <option value="en progreso" className="text-black">
+              En progreso
+            </option>
+            <option value="abierto" className="text-black">
+              Abierto
+            </option>
+            <option value="resuelto" className="text-black">
+              Resuelto
+            </option>
+            <option value="cerrado" className="text-black">
+              Cerrado
+            </option>
+          </select>
         </div>
 
         {/* Botones de acción */}

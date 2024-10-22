@@ -24,6 +24,47 @@ const obtenerProyectos = async (req, res, next) => {
   }
 };
 
+const updateProyecto = async (req, res, next) => {
+  const {
+    id,
+    nombre,
+    descripcion,
+    fecha_inicio,
+    fecha_fin,
+    estado,
+    creado_por,
+  } = req.body;
+  const query = `
+    UPDATE public.proyectos
+    SET 
+      nombre = $1,
+      descripcion = $2,
+      fecha_inicio = $3,
+      fecha_fin = $4,
+      estado = $5
+      creado_por = $6
+    WHERE 
+      id = $7;
+  `;
+
+  const values = [
+    nombre,
+    descripcion,
+    fecha_inicio,
+    fecha_fin,
+    estado,
+    creado_por,
+    id,
+  ];
+
+  try {
+    const result = await pool.query(query, values);
+    console.log("Proyecto actualizado con éxito");
+  } catch (error) {
+    console.error("Error actualizando el proyecto:", error);
+  }
+};
+
 const contarProyectos = async (req, res, next) => {
   try {
     const result = await pool.query("SELECT COUNT(*) FROM public.proyectos");
@@ -37,4 +78,5 @@ const contarProyectos = async (req, res, next) => {
 module.exports = {
   obtenerProyectos,
   contarProyectos,
+  updateProyecto,
 };
