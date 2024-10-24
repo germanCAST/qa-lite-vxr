@@ -73,11 +73,9 @@ const EditModal: React.FC<ModalProps> = ({
         body: JSON.stringify(editableProject),
       });
       if (response.ok) {
-        const data = await response.json(); // Procesa la respuesta
-        console.log("Proyecto guardado exitosamente:", data);
-        alert(`Proyecto guardado exitosamente: ${data}`);
+        console.log("Proyecto guardado exitosamente");
+        alert("Proyecto guardado exitosamente");
         fetchAllData();
-        alert(`Proyecto guardado exitosamente: ${data}`);
       } else {
         console.error("Error al guardar el proyecto:", response.statusText);
         alert(`Error al guardar el proyecto: ${response.statusText}`);

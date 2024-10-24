@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Usuario } from "../../types";
+import { HiX } from "react-icons/hi";
 
-const CreateProjectForm: React.FC = () => {
+interface CreateProjectForm {
+  onClose: () => void;
+  fetchAllData: () => void;
+}
+
+const CreateProjectForm: React.FC<CreateProjectForm> = ({
+  onClose,
+  fetchAllData,
+}) => {
   const [user, setUser] = useState<Usuario | null>(null);
   const [proyecto_nombre, setProjectName] = useState<string>("");
   const [proyecto_descripcion, setProjectDescription] = useState<string>("");
@@ -56,7 +65,8 @@ const CreateProjectForm: React.FC = () => {
         const data = await response.json();
         console.log("Proyecto creado exitosamente:", data);
         alert("Proyecto creado con éxito");
-
+        onClose();
+        fetchAllData();
         // Limpiar el formulario después de crear el proyecto
         setProjectName("");
         setProjectDescription("");
@@ -69,85 +79,99 @@ const CreateProjectForm: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
-
-    // Aquí podrías enviar los datos a una API, como:
-    // await fetch('/api/createProject', { method: 'POST', body: JSON.stringify(newProject) })
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col justify-center items-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <h1 className="text-2xl font-bold mb-6">Crear Nuevo Proyecto</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-6 rounded-lg shadow-md dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-      >
-        {/* Nombre del Proyecto */}
-        <div className="mb-4">
-          <label htmlFor="projectName" className="block text-sm font-medium">
-            Nombre del Proyecto
-          </label>
-          <input
-            type="text"
-            id="projectName"
-            value={proyecto_nombre}
-            onChange={(e) => setProjectName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-          />
-        </div>
+    <>
+      {
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Crear Proyecto</h2>
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-100"
+              >
+                <HiX className="w-6 h-6" />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              {/* Nombre del Proyecto */}
+              <div className="mb-4">
+                <label
+                  htmlFor="projectName"
+                  className="block text-sm font-mediums"
+                >
+                  Nombre del Proyecto
+                </label>
+                <input
+                  type="text"
+                  id="projectName"
+                  value={proyecto_nombre}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+                />
+              </div>
 
-        {/* Descripción */}
-        <div className="mb-4">
-          <label
-            htmlFor="projectDescription"
-            className="block text-sm font-medium"
-          >
-            Descripción
-          </label>
-          <textarea
-            id="projectDescription"
-            value={proyecto_descripcion}
-            onChange={(e) => setProjectDescription(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-          />
-        </div>
+              {/* Descripción */}
+              <div className="mb-4">
+                <label
+                  htmlFor="projectDescription"
+                  className="block text-sm font-medium"
+                >
+                  Descripción
+                </label>
+                <textarea
+                  id="projectDescription"
+                  value={proyecto_descripcion}
+                  onChange={(e) => setProjectDescription(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+                />
+              </div>
 
-        {/* Fecha de inicio */}
-        <div className="mb-4">
-          <label htmlFor="startDate" className="block text-sm font-medium">
-            Fecha de inicio del proyecto
-          </label>
-          <input
-            type="date"
-            id="startDate"
-            value={fecha_inicio}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-          />
-        </div>
+              {/* Fecha de inicio */}
+              <div className="mb-4">
+                <label
+                  htmlFor="startDate"
+                  className="block text-sm font-medium"
+                >
+                  Fecha de inicio del proyecto
+                </label>
+                <input
+                  type="date"
+                  id="startDate"
+                  value={fecha_inicio}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+                />
+              </div>
 
-        {/* Fecha de finalización */}
-        <div className="mb-4">
-          <label htmlFor="endDate" className="block text-sm font-medium">
-            Fecha de finalización aproximada
-          </label>
-          <input
-            type="date"
-            id="endDate"
-            value={fecha_fin}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-          />
-        </div>
+              {/* Fecha de finalización */}
+              <div className="mb-4">
+                <label htmlFor="endDate" className="block text-sm font-medium">
+                  Fecha de finalización aproximada
+                </label>
+                <input
+                  type="date"
+                  id="endDate"
+                  value={fecha_fin}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+                />
+              </div>
 
-        {/* Botón de enviar */}
-        <button
-          type="submit"
-          className="w-full py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700"
-        >
-          Crear Proyecto
-        </button>
-      </form>
-    </div>
+              {/* Botón de enviar */}
+              <button
+                type="submit"
+                className="w-full py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700"
+              >
+                Crear Proyecto
+              </button>
+            </form>
+          </div>
+        </div>
+      }
+    </>
   );
 };
 

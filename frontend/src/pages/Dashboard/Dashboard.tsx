@@ -89,7 +89,10 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen w-full flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <main className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <Header userName={user?.name + " " + user?.lastname || "Usuario"} />
+        <Header
+          userName={user?.name + " " + user?.lastname || "Usuario"}
+          fetchAllData={fetchAllData}
+        />
         <CardsSection
           totalProyectos={totalProyectos}
           totalUsuarios={totalUsuarios}
