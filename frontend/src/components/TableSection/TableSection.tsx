@@ -7,12 +7,17 @@ import LoadingModal from "../Modal/LoadingModal";
 import { getCasosUsoByID } from "./utils/getCasosUsoByID";
 import { getCasosPruebaByID } from "./utils/getCasosPruebaByID";
 import { getDefectosByID } from "./utils/getDefectosByID";
+import DeleteModal from "../Modal/DeleteModal";
 
 interface TableSectionProps {
   proyectos: Proyecto[];
+  fetchAllData: () => void;
 }
 
-const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
+const TableSection: React.FC<TableSectionProps> = ({
+  proyectos,
+  fetchAllData,
+}) => {
   const [selectedProject, setSelectedProject] = useState<Proyecto | null>(null);
   const [selectedProjectCasosUso, setSelectedProjectCasosUso] = useState<
     CasoUso[] | null
@@ -26,6 +31,7 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   const openViewModal = async (project: Proyecto) => {
     try {
@@ -74,6 +80,16 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
   const closeEditModal = () => {
     setSelectedProject(null);
     setIsEditModalOpen(false);
+  };
+
+  const openDeleteModal = (project: Proyecto) => {
+    setSelectedProject(project);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setSelectedProject(null);
+    setIsDeleteModalOpen(false);
   };
 
   return (
@@ -144,7 +160,10 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
                             <HiPencilAlt />
                           </i>
                         </button>
-                        <button className="flex items-center justify-center space-x-1 text-red-500 hover:text-red-700">
+                        <button
+                          onClick={() => openDeleteModal(proyecto)}
+                          className="flex items-center justify-center space-x-1 text-red-500 hover:text-red-700"
+                        >
                           <i className="text-lg">
                             <HiTrash />
                           </i>
@@ -164,7 +183,6 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
           </table>
         </div>
       </section>
-
       {/* Modal para ver los detalles del proyecto */}
       <ViewModal
         isOpen={isViewModalOpen}
@@ -178,6 +196,13 @@ const TableSection: React.FC<TableSectionProps> = ({ proyectos }) => {
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
         project={selectedProject}
+        fetchAllData={fetchAllData}
+      />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        project={selectedProject}
+        fetchAllData={fetchAllData}
       />
     </>
   );

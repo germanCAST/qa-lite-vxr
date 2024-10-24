@@ -28,5 +28,6 @@ export interface Proyecto {
   fecha_inicio: string;
   fecha_fin: string;
   creado_por: string;
+  creado_por_id: string;
   casosUso: CasoUso[];
 }
