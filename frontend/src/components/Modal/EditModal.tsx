@@ -10,6 +10,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   project: Proyecto | null;
+  fetchAllData: () => void;
 }
 
 interface editableProject {
@@ -21,7 +22,12 @@ interface editableProject {
   fecha_fin: string;
 }
 
-const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
+const EditModal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  project,
+  fetchAllData,
+}) => {
   const [editableProject, setEditableProject] = useState<Proyecto>(
     project ?? {
       id: 0,
@@ -31,6 +37,7 @@ const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
       fecha_inicio: "",
       fecha_fin: "",
       creado_por: "",
+      creado_por_id: "",
       casosUso: [],
     }
   );
@@ -68,8 +75,12 @@ const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
       if (response.ok) {
         const data = await response.json(); // Procesa la respuesta
         console.log("Proyecto guardado exitosamente:", data);
+        alert(`Proyecto guardado exitosamente: ${data}`);
+        fetchAllData();
+        alert(`Proyecto guardado exitosamente: ${data}`);
       } else {
         console.error("Error al guardar el proyecto:", response.statusText);
+        alert(`Error al guardar el proyecto: ${response.statusText}`);
       }
     } catch (error) {
       console.error(error);
@@ -159,7 +170,7 @@ const EditModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
             <select
               id="creado_por"
               name="creado_por"
-              value={editableProject.creado_por}
+              value={editableProject.creado_por_id}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
             >

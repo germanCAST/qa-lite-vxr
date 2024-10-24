@@ -20,47 +20,47 @@ const Dashboard: React.FC = () => {
   // Estado para la paginación
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 8; // Definir cuántos ítems mostrar por página
+  const fetchAllData = async () => {
+    try {
+      setLoading(true);
+      const [proyectosRes, countRes, usersRes, casosRes] = await Promise.all([
+        fetch("/api/data/proyectos"),
+        fetch("/api/data/proyectos/count"),
+        fetch("/api/auth/count"),
+        fetch("/api/casos/count"),
+      ]);
+
+      if (proyectosRes.ok) {
+        const proyectosData = await proyectosRes.json();
+        setProyectos(proyectosData);
+      }
+
+      if (countRes.ok) {
+        const countData = await countRes.json();
+        setTotalProyectos(countData.total);
+      }
+
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setTotalUsuarios(usersData.total);
+      }
+
+      if (casosRes.ok) {
+        const casosData = await casosRes.json();
+        setTotalCasos(casosData.total_casos);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
 
     console.log(JSON.parse(storedUser!));
-    const fetchAllData = async () => {
-      try {
-        setLoading(true);
-        const [proyectosRes, countRes, usersRes, casosRes] = await Promise.all([
-          fetch("/api/data/proyectos"),
-          fetch("/api/data/proyectos/count"),
-          fetch("/api/auth/count"),
-          fetch("/api/casos/count"),
-        ]);
-
-        if (proyectosRes.ok) {
-          const proyectosData = await proyectosRes.json();
-          setProyectos(proyectosData);
-        }
-
-        if (countRes.ok) {
-          const countData = await countRes.json();
-          setTotalProyectos(countData.total);
-        }
-
-        if (usersRes.ok) {
-          const usersData = await usersRes.json();
-          setTotalUsuarios(usersData.total);
-        }
-
-        if (casosRes.ok) {
-          const casosData = await casosRes.json();
-          setTotalCasos(casosData.total_casos);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchAllData();
   }, []);
@@ -99,7 +99,10 @@ const Dashboard: React.FC = () => {
           <div className="text-center">Cargando datos...</div>
         ) : (
           <>
-            <TableSection proyectos={currentItems} />
+            <TableSection
+              proyectos={currentItems}
+              fetchAllData={fetchAllData}
+            />
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
