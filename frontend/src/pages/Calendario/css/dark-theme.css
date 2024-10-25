@@ -1,0 +1,33 @@
+/* dark-mode.css */
+.rbc-calendar {
+  background-color: #1f2937; /* Fondo oscuro */
+  color: #ffffff; /* Color del texto */
+}
+
+.rbc-header {
+  background-color: #111827; /* Fondo oscuro para los días de la semana */
+  color: #ffffff; /* Color del texto */
+}
+
+.rbc-month-view,
+.rbc-time-view {
+  background-color: #1f2937; /* Fondo oscuro para las celdas */
+}
+
+.rbc-event {
+  background-color: #3b82f6; /* Color del evento */
+  color: #ffffff; /* Color del texto del evento */
+}
+
+.rbc-today {
+  background-color: #374151; /* Color para el día actual */
+}
+
+.rbc-off-range-bg {
+  background-color: #111827; /* Fondo de los días fuera del rango */
+}
+
+.rbc-toolbar button {
+  background-color: #3b82f6;
+  color: white;
+}
