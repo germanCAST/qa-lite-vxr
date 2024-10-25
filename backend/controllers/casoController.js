@@ -116,16 +116,94 @@ const casosPruebaById = async (req, res, next) => {
 const obtenerAllCasosUso = async (req, res, next) => {
   try {
     const result = await pool.query(`
-      SELECT id, 
-      titulo as caso_uso_titulo, 
-      descripcion as caso_uso_descripcion,
-      fecha_creacion as caso_uso_creacion
-      FROM public.casos_uso
-      ORDER BY id ASC 
+      SELECT 
+      cu.id AS caso_uso_id, 
+      cu.id_proyecto,
+      p.nombre AS proyecto_nombre, 
+      cu.titulo AS caso_uso_titulo,
+      cu.descripcion AS caso_uso_descripcion,
+      cu.fecha_creacion AS caso_uso_creacion
+      FROM 
+      public.casos_uso cu
+      JOIN 
+      public.proyectos p ON cu.id_proyecto = p.id
+      ORDER BY 
+      cu.id ASC;
     `);
     res.json(result.rows);
   } catch (err) {
     next(err);
+  }
+};
+
+const updateCasoUso = async (req, res, next) => {
+  const {
+    caso_uso_creacion,
+    caso_uso_descripcion,
+    caso_uso_id,
+    caso_uso_titulo,
+    id_proyecto,
+    proyecto_nombre,
+  } = req.body;
+  console.log("id_proyecto", id_proyecto);
+  console.log("caso_uso_titulo", caso_uso_titulo);
+
+  const query = `
+    UPDATE public.casos_uso
+    SET 
+      id_proyecto = $1,
+      titulo = $2,
+      descripcion = $3,
+      fecha_creacion = $4
+    WHERE 
+      id = $5;
+  `;
+  console.log("proyecto", proyecto_nombre);
+  const idProyectoParsedToInt = parseInt(id_proyecto, 10);
+  const values = [
+    idProyectoParsedToInt,
+    caso_uso_titulo,
+    caso_uso_descripcion,
+    caso_uso_creacion,
+    caso_uso_id,
+  ];
+
+  try {
+    const result = await pool.query(query, values);
+    if (result) {
+      res.status(200).json({ message: "Caso prueba actualizado con éxito" });
+    }
+    console.log("Caso prueba actualizado con éxito", result);
+  } catch (error) {
+    console.error("Error actualizando el caso de prueba:", error);
+  }
+};
+
+const eliminarCasoUso = async (req, res, next) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ error: "El ID del caso de uso es requerido" });
+  }
+
+  const query = `
+  DELETE FROM public.casos_uso
+  WHERE id =$1
+  RETURNING *;
+  `;
+
+  try {
+    const result = await pool.query(query, [id]);
+    if (result.rowCount === 0) {
+      return res.status(400).json({ error: "Caso uso no encontrado" });
+    }
+    res
+      .status(200)
+      .json({ error: "Caso uso encontrado y eliminado con exito" });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -298,6 +376,59 @@ const crearCasoPrueba = async (req, res, next) => {
   }
 };
 
+const crearCasoUso = async (req, res, next) => {
+  const {
+    id_proyecto,
+    titulo_caso_uso,
+    descripcion_caso_uso,
+    creacion_caso_uso,
+  } = req.body;
+
+  // Comprobar que todos los campos requeridos están presentes
+  if (
+    !id_proyecto ||
+    !titulo_caso_uso ||
+    !descripcion_caso_uso ||
+    !creacion_caso_uso
+  ) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios" });
+  }
+
+  const query = `
+    INSERT INTO public.casos_uso 
+    (
+      id_proyecto,
+      titulo, 
+      descripcion, 
+      fecha_creacion
+    )
+    VALUES ($1, $2, $3, $4)
+    RETURNING *;
+  `;
+
+  const idProyectoParsedToInt = parseInt(id_proyecto, 10); // Asegurarse de que id_caso_uso es un número
+  const values = [
+    idProyectoParsedToInt,
+    titulo_caso_uso,
+    descripcion_caso_uso,
+    creacion_caso_uso, // Y aquí debe ir la fecha de creación
+  ];
+
+  try {
+    // Ejecutar la consulta para crear el caso de prueba
+    const result = await pool.query(query, values);
+
+    // Devolver el caso de prueba creado
+    res.status(201).json({
+      message: "Caso de uso creado con éxito",
+      casoPrueba: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error al crear el caso de uso:", error);
+    next(error); // Pasar el error al middleware de manejo de errores
+  }
+};
+
 module.exports = {
   contarCasos,
   casosUsoById,
@@ -307,4 +438,7 @@ module.exports = {
   updateCasoPrueba,
   eliminarCasoPrueba,
   crearCasoPrueba,
+  updateCasoUso,
+  eliminarCasoUso,
+  crearCasoUso,
 };

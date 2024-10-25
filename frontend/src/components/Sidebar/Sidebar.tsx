@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             Casos de Prueba
           </Link>
           <Link
-            to="/casosCasoUso"
+            to="/casosUso"
             className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
           >
             Casos de Uso
@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           <div>
             <p className="font-semibold">{user?.name || "Nombre de usuario"}</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {user?.userType || "Tipo de usuario"}
+              {user?.type || "Tipo de usuario"}
             </p>
           </div>
           <img

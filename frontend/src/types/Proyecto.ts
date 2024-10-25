@@ -22,6 +22,16 @@ export interface CasoUso {
 
 export interface CasoUsoConFechaCreacion {
   id: number;
+  caso_uso_id: number;
+  caso_uso_titulo: string;
+  caso_uso_descripcion: string;
+  caso_uso_creacion: string;
+}
+
+export interface CasoUsoConProyecto {
+  caso_uso_id: number;
+  id_proyecto: number;
+  proyecto_nombre: string;
   caso_uso_titulo: string;
   caso_uso_descripcion: string;
   caso_uso_creacion: string;

@@ -1,46 +1,36 @@
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CasoPruebaConCasoUso,
-  CasoUsoConFechaCreacion,
-} from "../../../types/Proyecto";
-import { Usuario } from "../../../types";
+import { CasoUsoConProyecto, Proyecto } from "../../../types/Proyecto";
 import { HiX } from "react-icons/hi";
-import { getAllUsuarios } from "../utils/getAllUsuarios";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  casoPruebaConCasoUso: CasoPruebaConCasoUso | null;
+  casoUsoConProyecto: CasoUsoConProyecto | null;
   fetchAllData: () => void;
 }
 
-const EditCasoPruebaModal: React.FC<ModalProps> = ({
+const EditCasoUsoModal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
-  casoPruebaConCasoUso,
+  casoUsoConProyecto: CasoUsoConProyecto,
   fetchAllData,
 }) => {
-  const [editableCasoPruebaConCasoUso, setEditableCasoPruebaConCasoUso] =
-    useState<CasoPruebaConCasoUso>(
-      casoPruebaConCasoUso ?? {
-        id: 0,
-        id_caso_uso: 0,
-        creado_por: 0,
-        creador_nombre: "",
-        creador_apellido: "",
+  const [editableCasoUsoConProyecto, setEditableCasoUsoConProyecto] =
+    useState<CasoUsoConProyecto>(
+      CasoUsoConProyecto ?? {
+        caso_uso_id: 0,
+        id_proyecto: 0,
+        proyecto_nombre: "",
         caso_uso_titulo: "",
-        caso_prueba_titulo: "",
-        caso_prueba_descripcion: "",
-        caso_prueba_creacion: "",
-        caso_prueba_estado: "",
+        caso_uso_descripcion: "",
+        caso_uso_creacion: "",
       }
     );
-  const [usuariosList, setUsuarios] = useState<Usuario[]>([]);
-  const [casosUsoList, setcasosUsoList] = useState<CasoUsoConFechaCreacion[]>(
-    []
-  );
+
+  const [, setcasosProyectoList] = useState<CasoUsoConProyecto[]>([]);
+  const [proyectosList, setProyectoList] = useState<Proyecto[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -48,33 +38,33 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
     >
   ) => {
     const { name, value } = e.target;
-    setEditableCasoPruebaConCasoUso((prev) => ({
+    setEditableCasoUsoConProyecto((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
   const handleDateChange = (date: Date | null, field: string) => {
-    setEditableCasoPruebaConCasoUso((prev) => ({
+    setEditableCasoUsoConProyecto((prev) => ({
       ...prev,
       [field]: date ? date.toISOString().split("T")[0] : "",
     }));
   };
 
-  const onSave = async (CasoPruebaConCasoUso: CasoPruebaConCasoUso) => {
+  const onSave = async (CasoUsoConProyecto: CasoUsoConProyecto) => {
     try {
-      console.log(JSON.stringify(CasoPruebaConCasoUso));
+      console.log(JSON.stringify(CasoUsoConProyecto));
       // Guardar el caso de prueba (descomenta para habilitar la llamada a la API)
-      const response = await fetch("/api/casos/updateCasoPrueba", {
+      const response = await fetch("/api/casos/updateCasoUso", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(CasoPruebaConCasoUso),
+        body: JSON.stringify(CasoUsoConProyecto),
       });
       if (response.ok) {
-        console.log("CasoPruebaConCasoUso guardado exitosamente");
-        alert("CasoPruebaConCasoUso guardado exitosamente");
+        console.log("CasoUsoConProyecto guardado exitosamente");
+        alert("CasoUsoConProyecto guardado exitosamente");
         fetchAllData();
       } else {
         console.error("Error al guardar:", response.statusText);
@@ -86,19 +76,21 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
   };
 
   const handleSave = () => {
-    onSave(editableCasoPruebaConCasoUso);
+    onSave(editableCasoUsoConProyecto);
     onClose();
   };
 
   useEffect(() => {
-    const fetchUsuarios = async () => {
+    const fetchProyectos = async () => {
       try {
-        const response = await getAllUsuarios();
-        if (response) {
-          const data = await response;
-          setUsuarios(data);
+        //pruebas con all proyectos
+        const response = await fetch("/api/data/proyectos");
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem("gettedCasosUso", JSON.stringify(data));
+          setProyectoList(data);
         } else {
-          console.error("Error al obtener los usuarios");
+          console.error("Error al obtener los proyectos");
         }
       } catch (error) {
         console.error("Error al conectar con el endpoint:", error);
@@ -106,11 +98,12 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
     };
     const fetchCasosUsos = async () => {
       try {
+        //pruebas con all proyectos
         const response = await fetch("/api/casos/getAllCasosUso");
         if (response.ok) {
           const data = await response.json();
           localStorage.setItem("casosUsoData", JSON.stringify(data));
-          setcasosUsoList(data);
+          setcasosProyectoList(data);
         } else {
           console.error("Error al obtener los casos de uso");
         }
@@ -118,23 +111,25 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
         console.error("Error al conectar con el endpoint:", error);
       }
     };
+    fetchProyectos();
     fetchCasosUsos();
-    fetchUsuarios();
   }, []);
 
   useEffect(() => {
-    if (casoPruebaConCasoUso) {
-      setEditableCasoPruebaConCasoUso(casoPruebaConCasoUso);
+    if (CasoUsoConProyecto) {
+      setEditableCasoUsoConProyecto(CasoUsoConProyecto);
     }
-  }, [casoPruebaConCasoUso]);
+  }, [CasoUsoConProyecto]);
 
-  if (!isOpen || !casoPruebaConCasoUso) return null;
+  // Función para eliminar duplicados basado en el id_proyecto
+
+  if (!isOpen || !CasoUsoConProyecto) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Editar Caso de Prueba</h2>
+          <h2 className="text-xl font-bold">Editar Caso de Uso</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-100"
@@ -146,14 +141,14 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
         {/* Formulario de edición */}
         <div className="space-y-4">
           <div>
-            <label htmlFor="caso_prueba_titulo" className="block font-semibold">
-              Nombre del Caso de Prueba
+            <label htmlFor="caso_uso_titulo" className="block font-semibold">
+              Nombre del Caso de Uso
             </label>
             <input
               type="text"
-              id="caso_prueba_titulo"
-              name="caso_prueba_titulo"
-              value={editableCasoPruebaConCasoUso.caso_prueba_titulo}
+              id="caso_uso_titulo"
+              name="caso_uso_titulo"
+              value={editableCasoUsoConProyecto.caso_uso_titulo}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
             />
@@ -166,54 +161,33 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
               Descripción
             </label>
             <textarea
-              id="caso_prueba_descripcion"
-              name="caso_prueba_descripcion"
-              value={editableCasoPruebaConCasoUso.caso_prueba_descripcion}
+              id="caso_uso_descripcion"
+              name="caso_uso_descripcion"
+              value={editableCasoUsoConProyecto.caso_uso_descripcion}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
             />
           </div>
-          <div>
-            <label htmlFor="creado_por" className="block font-semibold">
-              Creado por
-            </label>
-            <select
-              id="creado_por"
-              name="creado_por"
-              value={editableCasoPruebaConCasoUso.creado_por}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-            >
-              {usuariosList.map((usuario) => (
-                <option
-                  key={usuario.id}
-                  value={usuario.id}
-                  className="text-black"
-                >
-                  {usuario.name + " " + usuario.lastname}
-                </option>
-              ))}
-            </select>
-          </div>
 
           <div>
-            <label htmlFor="id_caso_uso" className="block font-semibold">
-              Caso de uso asignado
+            <label htmlFor="id_proyecto" className="block font-semibold">
+              Proyecto asignado
             </label>
             <select
-              id="id_caso_uso"
-              name="id_caso_uso"
-              value={editableCasoPruebaConCasoUso.id_caso_uso}
+              id="id_proyecto"
+              name="id_proyecto"
+              value={editableCasoUsoConProyecto.id_proyecto}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
             >
-              {casosUsoList.map((casoUso) => (
+              {/* Renderizar la lista filtrada sin duplicados */}
+              {proyectosList.map((proyecto) => (
                 <option
-                  key={casoUso.caso_uso_id}
-                  value={casoUso.caso_uso_id}
+                  key={proyecto.id}
+                  value={proyecto.id}
                   className="text-black"
                 >
-                  {casoUso.caso_uso_titulo}
+                  {proyecto.proyecto_nombre}
                 </option>
               ))}
             </select>
@@ -230,10 +204,8 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
               </label>
               <DatePicker
                 selected={
-                  editableCasoPruebaConCasoUso.caso_prueba_creacion
-                    ? new Date(
-                        editableCasoPruebaConCasoUso.caso_prueba_creacion
-                      )
+                  editableCasoUsoConProyecto.caso_uso_creacion
+                    ? new Date(editableCasoUsoConProyecto.caso_uso_creacion)
                     : null
                 }
                 onChange={(date) =>
@@ -246,29 +218,6 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
               />
             </div>
           </div>
-        </div>
-
-        <div>
-          <label htmlFor="estado" className="block font-semibold">
-            Estado del caso de prueba
-          </label>
-          <select
-            id="escaso_prueba_estadotado"
-            name="caso_prueba_estado"
-            value={editableCasoPruebaConCasoUso.caso_prueba_estado}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-          >
-            <option value="en progreso" className="text-black">
-              En progreso
-            </option>
-            <option value="pendiente" className="text-black">
-              Pendiente
-            </option>
-            <option value="completado" className="text-black">
-              Completado
-            </option>
-          </select>
         </div>
 
         {/* Botones de acción */}
@@ -291,4 +240,4 @@ const EditCasoPruebaModal: React.FC<ModalProps> = ({
   );
 };
 
-export default EditCasoPruebaModal;
+export default EditCasoUsoModal;
