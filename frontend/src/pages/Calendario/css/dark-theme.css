@@ -1,4 +1,3 @@
-/* dark-mode.css */
 .rbc-calendar {
   background-color: #1f2937; /* Fondo oscuro */
   color: #ffffff; /* Color del texto */
@@ -9,14 +8,69 @@
   color: #ffffff; /* Color del texto */
 }
 
-.rbc-month-view,
-.rbc-time-view {
-  background-color: #1f2937; /* Fondo oscuro para las celdas */
+/* Ocultar la grid de horas y expandir el contenedor */
+.rbc-time-content {
+  display: none; /* Ocultar la grid de horas */
 }
 
+.rbc-time-header-content {
+  flex: 1;
+  display: flex;
+  /* min-width: 0; */
+  flex-direction: column;
+  border-left: 1px solid #ddd;
+  width: 100%;
+  height: 100%;
+}
+/* Expandir la cabecera de los días para ocupar todo el espacio */
+.rbc-time-header {
+  height: 100% !important; /* Asegurarse de que ocupe todo el espacio disponible */
+  display: flex;
+  align-items: center;
+  justify-content: space-around; /* Distribuir uniformemente los días */
+}
+
+.rbc-time-header-cell {
+  flex-grow: 1; /* Permitir que cada celda/día crezca proporcionalmente */
+  text-align: center; /* Centrar el texto de los días */
+  padding: 10px 0; /* Ajusta el espacio interno según tu preferencia */
+  font-size: 1.2rem; /* Cambia el tamaño de la fuente si es necesario */
+  background-color: #333; /* Color de fondo oscuro para la cabecera */
+  color: white; /* Texto blanco para que combine con tu tema oscuro */
+}
+
+/* Asegúrate de que la vista ocupe todo el espacio sin las horas */
+.rbc-time-view {
+  height: 100%;
+  height: 100% !important; /* Asegura que la vista de semana ocupe todo el espacio */
+}
+
+/* Asegúrate de que la celda que contiene el evento ocupe el espacio disponible */
+.rbc-day-slot {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribuye los eventos uniformemente */
+  height: 100%; /* Asegúrate de que la celda ocupe todo el espacio vertical */
+}
+
+/* Asegúrate de que los eventos ocupen el espacio máximo disponible */
 .rbc-event {
-  background-color: #3b82f6; /* Color del evento */
-  color: #ffffff; /* Color del texto del evento */
+  flex-grow: 1; /* Permite que el evento crezca para ocupar espacio */
+  display: flex;
+  align-items: center; /* Centra el contenido dentro del evento */
+  justify-content: center; /* Opcional: centra el texto del evento */
+  height: auto; /* Ajusta automáticamente el alto de los eventos */
+  margin-bottom: 5px; /* Opcional: Añade un pequeño espacio entre eventos */
+}
+
+/* Asegúrate de que el contenido dentro del evento esté centrado */
+.rbc-event-content {
+  width: 100%;
+  text-align: center; /* Centra el texto dentro del evento */
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .rbc-today {
@@ -30,4 +84,54 @@
 .rbc-toolbar button {
   background-color: #3b82f6;
   color: white;
+}
+
+/* Estilos para el popup que muestra los eventos */
+.rbc-overlay {
+  background-color: #1f2937; /* Color de fondo oscuro */
+  border: 1px solid #374151; /* Borde acorde al tema oscuro */
+  color: white; /* Texto en blanco */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra para que destaque */
+}
+
+/* Estilo para los eventos dentro del popup */
+.rbc-overlay .rbc-event {
+  background-color: #374151; /* Fondo de cada evento dentro del popup */
+  color: white; /* Texto en blanco */
+  border: 1px solid #4b5563; /* Borde acorde al tema oscuro */
+  padding: 5px; /* Espacio dentro del evento */
+}
+
+/* Cambiar el color de la fecha en el popup */
+.rbc-overlay-header {
+  background-color: #111827; /* Fondo oscuro para la cabecera de la fecha */
+  color: #ffffff; /* Texto más claro para la fecha */
+  padding: 5px;
+  border-bottom: 1px solid #374151; /* Línea separadora */
+}
+
+/* En tu archivo dark-theme.css */
+.rbc-button-link {
+  color: white; /* Cambia el color del texto */
+  background-color: transparent; /* Fondo transparente */
+  border: none; /* Sin borde */
+  text-decoration: underline; /* Subrayado para que parezca un enlace */
+  cursor: pointer; /* Cambia el cursor para mostrar que es clickeable */
+}
+
+.rbc-show-more {
+  color: #1e90ff; /* Cambia el color del texto del "Show more" */
+}
+
+.rbc-show-more:hover {
+  color: #add8e6; /* Color del texto cuando el usuario pasa el ratón */
+}
+
+/* Asegúrate de que la fila ocupe el 100% del ancho y alto */
+.rbc-row-content {
+  display: flex;
+  flex-direction: column; /* Distribuir el contenido en columnas */
+  justify-content: space-between; /* Asegura que los elementos se distribuyan uniformemente */
+  width: 100%; /* Ocupar el 100% del ancho disponible */
+  height: 100%; /* Ocupar el 100% del alto disponible */
 }
