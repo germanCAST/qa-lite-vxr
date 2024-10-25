@@ -24,6 +24,24 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           >
             Calendario
           </Link>
+          <Link
+            to="/casosPrueba"
+            className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+          >
+            Casos de Prueba
+          </Link>
+          <Link
+            to="/casosCasoUso"
+            className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+          >
+            Casos de Uso
+          </Link>
+          <Link
+            to="/defecto"
+            className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+          >
+            Defectos
+          </Link>
         </nav>
       </div>
       <div className="mt-8">

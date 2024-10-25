@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Layout from "./components/Layout/Layout";
 import Calendario from "./pages/Calendario/Calendario";
+import CasosPrueba from "./pages/CasosPrueba/CasosPrueba";
 
 function App() {
   useEffect(() => {
@@ -22,10 +23,18 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/calendario" element={<Calendario />} />
+          <Route path="/casosPrueba" element={<CasosPrueba />} />
+
+          {/* Route for handling unknown routes */}
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </Router>
   );
+}
+
+function NotFound() {
+  return <h1>Route not found</h1>;
 }
 
 export default App;

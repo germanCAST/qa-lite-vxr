@@ -58,6 +58,8 @@ const obtenerProyectos = async (req, res, next) => {
         public.usuarios u 
       ON 
         p.creado_por = u.id
+      ORDER BY 
+      p.id ASC;
     `);
     res.json(result.rows);
   } catch (err) {

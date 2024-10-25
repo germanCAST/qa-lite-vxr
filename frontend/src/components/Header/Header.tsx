@@ -78,6 +78,15 @@ const Header: React.FC<HeaderProps> = ({ userName, fetchAllData }) => {
           <ExclamationCircleIcon className="h-5 w-5 text-gray-500 mr-2" />
         </button>
 
+        {/* Botón Crear Caso Uso */}
+        <button
+          onClick={handleOpenCasoUsoModal}
+          className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-md shadow-sm"
+        >
+          <span className="ml-2">Crear Caso Uso</span>
+          <FolderIcon className="h-5 w-5 text-gray-500 mr-2" />
+        </button>
+
         {/* Botón Crear Defecto */}
         <button
           onClick={handleOpenDefectoModal}
@@ -86,15 +95,6 @@ const Header: React.FC<HeaderProps> = ({ userName, fetchAllData }) => {
           <span className="ml-2">Crear Defecto</span>
 
           <DocumentTextIcon className="h-5 w-5 text-gray-500 mr-2" />
-        </button>
-
-        {/* Botón Crear Caso Uso */}
-        <button
-          onClick={handleOpenCasoUsoModal}
-          className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-md shadow-sm"
-        >
-          <span className="ml-2">Crear Caso Uso</span>
-          <FolderIcon className="h-5 w-5 text-gray-500 mr-2" />
         </button>
       </div>
 

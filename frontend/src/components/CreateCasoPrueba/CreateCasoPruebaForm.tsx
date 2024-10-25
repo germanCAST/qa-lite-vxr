@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Usuario } from "../../types";
+import { CasoUsoConFechaCreacion, Usuario } from "../../types";
 import { HiX } from "react-icons/hi";
 
 interface CreateCasoPruebaForm {
@@ -12,11 +12,13 @@ const CreateCasoPruebaForm: React.FC<CreateCasoPruebaForm> = ({
   fetchAllData,
 }) => {
   const [user, setUser] = useState<Usuario | null>(null);
-  const [proyecto_nombre, setProjectName] = useState<string>("");
-  const [proyecto_descripcion, setProjectDescription] = useState<string>("");
-  const [fecha_inicio, setStartDate] = useState<string>("");
-  const [fecha_fin, setEndDate] = useState<string>("");
-  const [estado, setEstado] = useState<string>("abierto");
+  const [casoPrueba_titulo, setcasoPrueba_titulo] = useState<string>("");
+  const [casoPrueba_descripcion, setcasoPrueba_descripcion] =
+    useState<string>("");
+  const [casoUso, setcasoUso] = useState<string>("");
+  const [casosUsoList, setcasosUsoList] = useState<CasoUsoConFechaCreacion[]>(
+    []
+  );
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -24,57 +26,63 @@ const CreateCasoPruebaForm: React.FC<CreateCasoPruebaForm> = ({
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
+    const fetchCasosUsos = async () => {
+      try {
+        const response = await fetch("/api/casos/getAllCasosUso");
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem("casosUsoData", JSON.stringify(data));
+          setcasosUsoList(data);
+        } else {
+          console.error("Error al obtener los casos de uso");
+        }
+      } catch (error) {
+        console.error("Error al conectar con el endpoint:", error);
+      }
+    };
+    fetchCasosUsos();
   }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (
-      !proyecto_nombre ||
-      !proyecto_descripcion ||
-      !fecha_inicio ||
-      !fecha_fin ||
-      !estado
-    ) {
+    if (!casoPrueba_titulo || !casoPrueba_descripcion || !casoUso) {
       alert("Todos los campos son requeridos");
       return;
     }
 
-    // Aquí puedes manejar el envío del formulario y guardar el nuevo proyecto
-    const nuevoProyecto = {
-      proyecto_nombre,
-      proyecto_descripcion,
-      fecha_inicio,
-      fecha_fin,
-      estado: estado ?? "abierto",
+    // Aquí puedes manejar el envío del formulario y guardar el nuevo Caso de Prueba
+    const nuevoCasoPrueba = {
+      casoPrueba_titulo: casoPrueba_titulo,
+      casoPrueba_descripcion: casoPrueba_descripcion,
+      casoPrueba_creacion: new Date().toLocaleDateString("es-ES"),
+      casoPrueba_estado: "en progreso",
+      id_caso_uso: casoUso,
       creado_por: user ? user.id : "",
     };
 
-    console.log("Nuevo proyecto creado:", nuevoProyecto);
+    console.log("Nuevo caso prueba creado:", nuevoCasoPrueba);
     try {
+      console.log(JSON.stringify(nuevoCasoPrueba));
       //! verificar por que no se envia el body
-      const response = await fetch("/api/data/proyectos/create", {
+      const response = await fetch("/api/casos/crearCasoPrueba", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(nuevoProyecto),
+        body: JSON.stringify(nuevoCasoPrueba),
       });
-
       if (response.ok) {
         const data = await response.json();
-        console.log("Proyecto creado exitosamente:", data);
-        alert("Proyecto creado con éxito");
+        console.log("Nuevo caso prueba exitosamente:", data);
+        alert("Nuevo caso prueba con éxito");
         onClose();
         fetchAllData();
-        // Limpiar el formulario después de crear el proyecto
-        setProjectName("");
-        setProjectDescription("");
-        setStartDate("");
-        setEndDate("");
-        setEstado("");
+        //   // Limpiar el formulario después de crear el proyecto
+        setcasoPrueba_titulo("");
+        setcasoPrueba_descripcion("");
       }
-
       console.log(response);
     } catch (error) {
       console.error(error);
@@ -102,13 +110,13 @@ const CreateCasoPruebaForm: React.FC<CreateCasoPruebaForm> = ({
                   htmlFor="projectName"
                   className="block text-sm font-mediums"
                 >
-                  Nombre del Proyecto
+                  Nombre del Caso de Prueba
                 </label>
                 <input
                   type="text"
                   id="projectName"
-                  value={proyecto_nombre}
-                  onChange={(e) => setProjectName(e.target.value)}
+                  value={casoPrueba_titulo}
+                  onChange={(e) => setcasoPrueba_titulo(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
                 />
               </div>
@@ -119,45 +127,40 @@ const CreateCasoPruebaForm: React.FC<CreateCasoPruebaForm> = ({
                   htmlFor="projectDescription"
                   className="block text-sm font-medium"
                 >
-                  Descripción
+                  Descripción de Caso de Prueba
                 </label>
                 <textarea
                   id="projectDescription"
-                  value={proyecto_descripcion}
-                  onChange={(e) => setProjectDescription(e.target.value)}
+                  value={casoPrueba_descripcion}
+                  onChange={(e) => setcasoPrueba_descripcion(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
                 />
               </div>
 
-              {/* Fecha de inicio */}
-              <div className="mb-4">
+              <div>
                 <label
-                  htmlFor="startDate"
-                  className="block text-sm font-medium"
+                  htmlFor="caso_uso_titulo"
+                  className="block font-semibold"
                 >
-                  Fecha de inicio del proyecto
+                  Caso de uso asignado
                 </label>
-                <input
-                  type="date"
-                  id="startDate"
-                  value={fecha_inicio}
-                  onChange={(e) => setStartDate(e.target.value)}
+                <select
+                  id="id_caso_uso"
+                  name="id_caso_uso"
+                  value={casoUso}
+                  onChange={(e) => setcasoUso(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-                />
-              </div>
-
-              {/* Fecha de finalización */}
-              <div className="mb-4">
-                <label htmlFor="endDate" className="block text-sm font-medium">
-                  Fecha de finalización aproximada
-                </label>
-                <input
-                  type="date"
-                  id="endDate"
-                  value={fecha_fin}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-                />
+                >
+                  {casosUsoList.map((casoUso) => (
+                    <option
+                      key={casoUso.id}
+                      value={casoUso.id}
+                      className="text-black"
+                    >
+                      {casoUso.caso_uso_titulo}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Botón de enviar */}
@@ -165,7 +168,7 @@ const CreateCasoPruebaForm: React.FC<CreateCasoPruebaForm> = ({
                 type="submit"
                 className="w-full py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700"
               >
-                Crear Proyecto
+                Crear Caso de Prueba
               </button>
             </form>
           </div>
