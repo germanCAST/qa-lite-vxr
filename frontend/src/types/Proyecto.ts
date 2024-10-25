@@ -61,3 +61,20 @@ export interface Proyecto {
   creado_por_id: string;
   casosUso: CasoUso[];
 }
+
+export interface DefectoAllResponse {
+  defecto_id: number;
+  defecto_descripcion: string;
+  defecto_estado: string;
+  defecto_prioridad: string;
+  defecto_fecha_creacion: string;
+  defecto_fecha_actualizacion: string;
+  creador_id: number;
+  creador_nombre: string;
+  creador_apellido: string;
+  asignado_id: number;
+  asignado_nombre: string;
+  asignado_apellido: string;
+  caso_prueba_id: number;
+  caso_prueba_titulo: string;
+}
