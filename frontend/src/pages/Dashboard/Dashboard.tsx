@@ -32,6 +32,7 @@ const Dashboard: React.FC = () => {
 
       if (proyectosRes.ok) {
         const proyectosData = await proyectosRes.json();
+        localStorage.setItem("proyectosData", JSON.stringify(proyectosData));
         setProyectos(proyectosData);
       }
 

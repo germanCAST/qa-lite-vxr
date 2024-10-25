@@ -19,10 +19,10 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             Dashboard
           </Link>
           <Link
-            to="/proyectos"
+            to="/calendario"
             className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
           >
-            Proyectos
+            Calendario
           </Link>
         </nav>
       </div>
