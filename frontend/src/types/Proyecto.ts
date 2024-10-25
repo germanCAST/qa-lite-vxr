@@ -20,6 +20,26 @@ export interface CasoUso {
   casosPrueba: CasoPrueba[];
 }
 
+export interface CasoUsoConFechaCreacion {
+  id: number;
+  caso_uso_titulo: string;
+  caso_uso_descripcion: string;
+  caso_uso_creacion: string;
+}
+
+export interface CasoPruebaConCasoUso {
+  id: number;
+  id_caso_uso: number;
+  creado_por: number;
+  creador_nombre: string;
+  creador_apellido: string;
+  caso_uso_titulo: string;
+  caso_prueba_titulo: string;
+  caso_prueba_descripcion: string;
+  caso_prueba_creacion: string;
+  caso_prueba_estado: string;
+}
+
 export interface Proyecto {
   id: number;
   proyecto_nombre: string;
