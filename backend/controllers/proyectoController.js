@@ -59,7 +59,7 @@ const obtenerProyectos = async (req, res, next) => {
       ON 
         p.creado_por = u.id
       ORDER BY 
-      p.id ASC;
+      p.id DESC;
     `);
     res.json(result.rows);
   } catch (err) {

@@ -9,6 +9,9 @@ const {
   updateCasoPrueba,
   eliminarCasoPrueba,
   crearCasoPrueba,
+  updateCasoUso,
+  eliminarCasoUso,
+  crearCasoUso,
 } = require("../controllers/casoController");
 
 router.get("/count", contarCasos);
@@ -17,8 +20,11 @@ router.get("/getCasosPruebaById/:id", casosPruebaById);
 router.get("/getAllCasosUso", obtenerAllCasosUso);
 router.get("/getAllCasosPrueba", obtenerAllCasosPrueba);
 router.post("/updateCasoPrueba", updateCasoPrueba);
+router.post("/updateCasoUso", updateCasoUso);
 router.post("/crearCasoPrueba", crearCasoPrueba);
 router.delete("/deleteCasoPrueba", eliminarCasoPrueba);
+router.delete("/deleteCasoUso", eliminarCasoUso);
+router.post("/crearCasoUso", crearCasoUso);
 
 // /api/casos/deleteCasoPrueba
 

@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Layout from "./components/Layout/Layout";
 import Calendario from "./pages/Calendario/Calendario";
 import CasosPrueba from "./pages/CasosPrueba/CasosPrueba";
+import CasosUso from "./pages/CasosUso/CasosUso";
 
 function App() {
   useEffect(() => {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/calendario" element={<Calendario />} />
           <Route path="/casosPrueba" element={<CasosPrueba />} />
+          <Route path="/casosUso" element={<CasosUso />} />
 
           {/* Route for handling unknown routes */}
           <Route path="*" element={<NotFound />} />
