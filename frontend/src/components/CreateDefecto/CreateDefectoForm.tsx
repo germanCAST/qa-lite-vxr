@@ -1,177 +1,219 @@
 import React, { useEffect, useState } from "react";
-import { Usuario } from "../../types";
+import { CasoPruebaConCasoUso, Usuario } from "../../types";
 import { HiX } from "react-icons/hi";
 
-interface CreateDefectoForm {
+interface CreateDefectoFormProps {
   onClose: () => void;
   fetchAllData: () => void;
 }
 
-const CreateDefectoForm: React.FC<CreateDefectoForm> = ({
+const CreateDefectoForm: React.FC<CreateDefectoFormProps> = ({
   onClose,
   fetchAllData,
 }) => {
   const [user, setUser] = useState<Usuario | null>(null);
-  const [proyecto_nombre, setProjectName] = useState<string>("");
-  const [proyecto_descripcion, setProjectDescription] = useState<string>("");
-  const [fecha_inicio, setStartDate] = useState<string>("");
-  const [fecha_fin, setEndDate] = useState<string>("");
-  const [estado, setEstado] = useState<string>("abierto");
+  const [descripcion, setDescripcion] = useState<string>("");
+  const [estado, setEstado] = useState<string>("pendiente");
+  const [prioridad, setPrioridad] = useState<string>("media");
+  const [asignadoA, setAsignadoA] = useState<string>("");
+  const [casoPruebaId, setCasoPruebaId] = useState<string | "">("");
+  const [casosPruebaList, setcasosPruebaList] = useState<
+    CasoPruebaConCasoUso[]
+  >([]);
+  const [usuariosList, setUsuariosList] = useState<Usuario[]>([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    const fetchCasosPrueba = async () => {
+      try {
+        const response = await fetch("/api/casos/getAllCasosPrueba");
+        if (response.ok) {
+          const data = await response.json();
+          setcasosPruebaList(data);
+        } else {
+          console.error("Error al obtener los proyectos");
+        }
+      } catch (error) {
+        console.error("Error al conectar con el endpoint:", error);
+      }
+    };
+
+    const fetchUsuarios = async () => {
+      try {
+        const response = await fetch("/api/auth/getAllUsuarios"); // Cambia la ruta según tu API
+        if (response.ok) {
+          const data = await response.json();
+          setUsuariosList(data);
+        } else {
+          console.error("Error al obtener los usuarios");
+        }
+      } catch (error) {
+        console.error("Error al conectar con el endpoint:", error);
+      }
+    };
+
+    fetchCasosPrueba();
+
+    fetchUsuarios();
   }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (
-      !proyecto_nombre ||
-      !proyecto_descripcion ||
-      !fecha_inicio ||
-      !fecha_fin ||
-      !estado
-    ) {
+    if (!descripcion || !estado || !prioridad || !asignadoA || !casoPruebaId) {
       alert("Todos los campos son requeridos");
       return;
     }
 
-    // Aquí puedes manejar el envío del formulario y guardar el nuevo proyecto
-    const nuevoProyecto = {
-      proyecto_nombre,
-      proyecto_descripcion,
-      fecha_inicio,
-      fecha_fin,
-      estado: estado ?? "abierto",
-      creado_por: user ? user.id : "",
+    const nuevoDefecto = {
+      descripcion,
+      estado,
+      prioridad,
+      fecha_creacion: new Date().toLocaleDateString("es-ES"),
+      creado_por: user!.id,
+      asignado_a: asignadoA,
+      id_caso_prueba: casoPruebaId,
     };
 
-    console.log("Nuevo proyecto creado:", nuevoProyecto);
     try {
-      //! verificar por que no se envia el body
-      const response = await fetch("/api/data/proyectos/create", {
+      const response = await fetch("/api/defectos/createDefecto", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(nuevoProyecto),
+        body: JSON.stringify(nuevoDefecto),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Proyecto creado exitosamente:", data);
-        alert("Proyecto creado con éxito");
+        console.log("Defecto creado exitosamente:", data);
+        alert("Defecto creado con éxito");
         onClose();
         fetchAllData();
-        // Limpiar el formulario después de crear el proyecto
-        setProjectName("");
-        setProjectDescription("");
-        setStartDate("");
-        setEndDate("");
-        setEstado("");
+        setDescripcion("");
+        setEstado("pendiente");
+        setPrioridad("media");
+        setAsignadoA("");
+        setCasoPruebaId("");
+      } else {
+        console.error("Error al crear el defecto:", response.statusText);
       }
-
-      console.log(response);
     } catch (error) {
-      console.error(error);
+      console.error("Error en la solicitud:", error);
     }
   };
 
   return (
-    <>
-      {
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Crear Defecto</h2>
-              <button
-                onClick={onClose}
-                className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-100"
-              >
-                <HiX className="w-6 h-6" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit}>
-              {/* Nombre del Proyecto */}
-              <div className="mb-4">
-                <label
-                  htmlFor="projectName"
-                  className="block text-sm font-mediums"
-                >
-                  Nombre del Proyecto
-                </label>
-                <input
-                  type="text"
-                  id="projectName"
-                  value={proyecto_nombre}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-                />
-              </div>
-
-              {/* Descripción */}
-              <div className="mb-4">
-                <label
-                  htmlFor="projectDescription"
-                  className="block text-sm font-medium"
-                >
-                  Descripción
-                </label>
-                <textarea
-                  id="projectDescription"
-                  value={proyecto_descripcion}
-                  onChange={(e) => setProjectDescription(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-                />
-              </div>
-
-              {/* Fecha de inicio */}
-              <div className="mb-4">
-                <label
-                  htmlFor="startDate"
-                  className="block text-sm font-medium"
-                >
-                  Fecha de inicio del proyecto
-                </label>
-                <input
-                  type="date"
-                  id="startDate"
-                  value={fecha_inicio}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-                />
-              </div>
-
-              {/* Fecha de finalización */}
-              <div className="mb-4">
-                <label htmlFor="endDate" className="block text-sm font-medium">
-                  Fecha de finalización aproximada
-                </label>
-                <input
-                  type="date"
-                  id="endDate"
-                  value={fecha_fin}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
-                />
-              </div>
-
-              {/* Botón de enviar */}
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700"
-              >
-                Crear Proyecto
-              </button>
-            </form>
-          </div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Crear Defecto</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-800 dark:hover:text-gray-100"
+          >
+            <HiX className="w-6 h-6" />
+          </button>
         </div>
-      }
-    </>
+        <form onSubmit={handleSubmit}>
+          {/* Descripción del defecto */}
+          <div className="mb-4">
+            <label htmlFor="descripcion" className="block text-sm font-medium">
+              Descripción
+            </label>
+            <textarea
+              id="descripcion"
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+            />
+          </div>
+
+          {/* Estado */}
+          <div className="mb-4">
+            <label htmlFor="estado" className="block text-sm font-medium">
+              Estado
+            </label>
+            <select
+              id="estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+            >
+              <option value="pendiente">Pendiente</option>
+              <option value="en progreso">En progreso</option>
+              <option value="resuelto">Resuelto</option>
+            </select>
+          </div>
+
+          {/* Prioridad */}
+          <div className="mb-4">
+            <label htmlFor="prioridad" className="block text-sm font-medium">
+              Prioridad
+            </label>
+            <select
+              id="prioridad"
+              value={prioridad}
+              onChange={(e) => setPrioridad(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
+            >
+              <option value="alta">Alta</option>
+              <option value="media">Media</option>
+              <option value="baja">Baja</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="asignado_id" className=" block font-semibold">
+              Asignado a
+            </label>
+            <select
+              id="asignado_id"
+              name="asignado_id"
+              value={asignadoA}
+              onChange={(e) => setAsignadoA(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1 text-black mb-4"
+            >
+              {usuariosList.map((usuario) => (
+                <option key={usuario.id} value={usuario.id}>
+                  {usuario.name} {usuario.lastname}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="caso_prueba_id" className="block font-semibold">
+              Caso de Prueba Relacionado
+            </label>
+            <select
+              id="caso_prueba_id"
+              name="caso_prueba_id"
+              value={casoPruebaId}
+              onChange={(e) => setCasoPruebaId(e.target.value)}
+              className="w-full mb-4 p-2 border border-gray-300 rounded mt-1 text-black"
+            >
+              {casosPruebaList.map((caso) => (
+                <option key={caso.id} value={caso.id}>
+                  {caso.caso_prueba_titulo}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Botón de enviar */}
+          <button
+            type="submit"
+            className="w-full py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700"
+          >
+            Crear Defecto
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

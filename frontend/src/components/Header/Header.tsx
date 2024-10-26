@@ -8,7 +8,9 @@ import {
   ExclamationCircleIcon,
   DocumentTextIcon,
   FolderIcon,
+  UserIcon,
 } from "@heroicons/react/24/solid";
+import CreateUsuario from "../CreateUsuario/CreateUsuario";
 
 interface HeaderProps {
   userName: string;
@@ -21,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({ userName, fetchAllData }) => {
     React.useState(false);
   const [isDefectoModalOpen, setIsDefectoModalOpen] = React.useState(false);
   const [isCasoUsoModalOpen, setIsCasoUsoModalOpen] = React.useState(false);
+  const [isUsuarioModalOpen, setIsUsuarioModalOpen] = React.useState(false);
 
   const handleOpenProjectModal = () => {
     setIsProjectModalOpen(true);
@@ -52,6 +55,14 @@ const Header: React.FC<HeaderProps> = ({ userName, fetchAllData }) => {
 
   const handleCloseCasoUsoModal = () => {
     setIsCasoUsoModalOpen(false);
+  };
+
+  const handleOpenUsuarioModal = () => {
+    setIsUsuarioModalOpen(true);
+  };
+
+  const handleCloseUsuarioModal = () => {
+    setIsUsuarioModalOpen(false);
   };
 
   return (
@@ -96,12 +107,28 @@ const Header: React.FC<HeaderProps> = ({ userName, fetchAllData }) => {
 
           <DocumentTextIcon className="h-5 w-5 text-gray-500 mr-2" />
         </button>
+
+        {/* Botón Crear Usuario */}
+        <button
+          onClick={handleOpenUsuarioModal}
+          className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-md shadow-sm"
+        >
+          <span className="ml-2">Crear Usuario</span>
+          <UserIcon className="h-5 w-5 text-gray-500 mr-2" />
+        </button>
       </div>
 
       {/* Modales */}
       {isProjectModalOpen && (
         <CreateProjectForm
           onClose={handleCloseProjectModal}
+          fetchAllData={fetchAllData}
+        />
+      )}
+
+      {isUsuarioModalOpen && (
+        <CreateUsuario
+          onClose={handleCloseUsuarioModal}
           fetchAllData={fetchAllData}
         />
       )}

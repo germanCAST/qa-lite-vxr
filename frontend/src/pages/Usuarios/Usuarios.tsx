@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Header, Pagination } from "../../components";
 
-import { DefectoAllResponse } from "../../types/Proyecto";
+import { CompleteUser } from "../../types/Usuario";
 import { Usuario } from "../../types/Usuario";
-import TableSectionDefecto from "../../components/TableSection/TableSectionDefecto";
+import TableSectionUsuarios from "../../components/TableSection/TableSectionUsuarios";
 
-const Defectos: React.FC = () => {
+const Usuarios: React.FC = () => {
   const [user, setUser] = useState<Usuario | null>(null);
-  const [DefectoAllResponse, setDefectoAllResponse] = useState<
-    DefectoAllResponse[]
-  >([]);
+  const [usuario, setUsuario] = useState<CompleteUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Estado para la paginación
@@ -18,20 +16,26 @@ const Defectos: React.FC = () => {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const [casosUsoRes] = await Promise.all([
-        fetch("/api/defectos/getAllDefectos"),
-      ]);
 
-      if (casosUsoRes.ok) {
-        const casosUsoData = await casosUsoRes.json();
-        localStorage.setItem(
-          "casosUsoConProyectoData",
-          JSON.stringify(casosUsoData)
-        );
-        setDefectoAllResponse(casosUsoData);
+      const storedToken = localStorage.getItem("token");
+
+      // Realiza la solicitud usando el método POST y el token en el cuerpo
+      const AllUsuariosRes = await fetch("/api/auth/getCompleteAllUsuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: storedToken!.replace(/^"(.*)"$/, "$1") }),
+      });
+
+      if (AllUsuariosRes.ok) {
+        const completeUser = await AllUsuariosRes.json();
+        localStorage.setItem("AllUsuariosData", JSON.stringify(completeUser));
+        setUsuario(completeUser);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+      alert(`Error al obtener los datos de los usuarios ${error}`);
     } finally {
       setLoading(false);
     }
@@ -39,6 +43,7 @@ const Defectos: React.FC = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+
     if (storedUser) setUser(JSON.parse(storedUser));
 
     console.log(JSON.parse(storedUser!));
@@ -47,15 +52,12 @@ const Defectos: React.FC = () => {
   }, []);
 
   // Calcular el número total de páginas
-  const totalPages = Math.ceil(DefectoAllResponse.length / itemsPerPage);
+  const totalPages = Math.ceil(usuario.length / itemsPerPage);
 
   // Calcular los índices de los elementos a mostrar en la página actual
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = DefectoAllResponse.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = usuario.slice(indexOfFirstItem, indexOfLastItem);
 
   // Funciones para cambiar de página
   const goToNextPage = () => {
@@ -82,8 +84,8 @@ const Defectos: React.FC = () => {
           <div className="text-center">Cargando datos...</div>
         ) : (
           <>
-            <TableSectionDefecto
-              defectoAllResponse={currentItems}
+            <TableSectionUsuarios
+              completeUser={currentItems}
               fetchAllData={fetchAllData}
             />
             <Pagination
@@ -99,4 +101,4 @@ const Defectos: React.FC = () => {
   );
 };
 
-export default Defectos;
+export default Usuarios;

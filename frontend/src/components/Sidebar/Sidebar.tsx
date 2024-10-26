@@ -37,17 +37,25 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             Casos de Uso
           </Link>
           <Link
-            to="/defecto"
+            to="/defectos"
             className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
           >
             Defectos
+          </Link>
+          <Link
+            to="/usuarios"
+            className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+          >
+            Usuarios
           </Link>
         </nav>
       </div>
       <div className="mt-8">
         <div className="flex items-center space-x-4">
           <div>
-            <p className="font-semibold">{user?.name || "Nombre de usuario"}</p>
+            <p className="font-semibold">
+              {user?.name + " " + user?.lastname || "Nombre de usuario"}
+            </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {user?.type || "Tipo de usuario"}
             </p>
