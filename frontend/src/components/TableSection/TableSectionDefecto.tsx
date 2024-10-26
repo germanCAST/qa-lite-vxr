@@ -5,8 +5,8 @@ import { format } from "date-fns";
 import { HiPencilAlt, HiTrash } from "react-icons/hi";
 import LoadingModal from "../Modal/LoadingModal";
 
-import EditCasoUsoModal from "../Modal/CasosUso/EditCasoUsoModal";
-import DeleteCasoUsoModal from "../Modal/CasosUso/DeleteCasoUsoModal";
+import EditDefectoModal from "../Modal/Defectos/EditDefectoModal";
+import DeleteDefectoModal from "../Modal/Defectos/DeleteDefectoModal";
 
 interface TableSectionDefecto {
   defectoAllResponse: DefectoAllResponse[];
@@ -55,11 +55,14 @@ const TableSectionDefecto: React.FC<TableSectionDefecto> = ({
           <table className="min-w-full bg-white dark:bg-gray-800">
             <thead>
               <tr>
-                <th className="px-4 py-2 border-b text-left">Defecto</th>
+                <th className="px-4 py-2 border-b text-left">ID</th>
                 <th className="px-4 py-2 border-b text-left">Descripción</th>
-                <th className="px-4 py-2 border-b text-left">Proyecto</th>
+                <th className="px-4 py-2 border-b text-left">Detectado por</th>
                 <th className="px-4 py-2 border-b text-left">
-                  Fecha de creacion
+                  Fecha de deteccion
+                </th>
+                <th className="px-4 py-2 border-b text-left">
+                  Fecha de actualizacion
                 </th>
                 <th className="px-4 py-2 border-b text-left">Acciones</th>
               </tr>
@@ -69,7 +72,7 @@ const TableSectionDefecto: React.FC<TableSectionDefecto> = ({
                 DefectoAllResponse.map((CasoUsoConProyecto) => (
                   <tr key={CasoUsoConProyecto.defecto_id}>
                     <td className="px-4 py-4 border-b">
-                      {"Defecto #" + CasoUsoConProyecto.defecto_id}
+                      {"" + CasoUsoConProyecto.defecto_id}
                     </td>
                     <td
                       className="px-4 py-4 border-b max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
@@ -137,16 +140,16 @@ const TableSectionDefecto: React.FC<TableSectionDefecto> = ({
         </div>
       </section>
       {/* Modal para ver los detalles del caso de prueba */}
-      <EditCasoUsoModal
+      <EditDefectoModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
-        casoUsoConProyecto={TableSectionCasosUso}
+        defectoAllResponse={TableSectionCasosUso}
         fetchAllData={fetchAllData}
       />
-      <DeleteCasoUsoModal
+      <DeleteDefectoModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        casoUsoConProyecto={TableSectionCasosUso}
+        defectoAllResponse={TableSectionCasosUso}
         fetchAllData={fetchAllData}
       />
     </>

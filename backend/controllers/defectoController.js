@@ -91,4 +91,166 @@ const getAllDefectos = async (req, res, next) => {
   }
 };
 
-module.exports = { defectosById, getAllDefectos };
+const updateDefecto = async (req, res) => {
+  const {
+    defecto_id,
+    defecto_descripcion,
+    defecto_estado,
+    defecto_prioridad,
+    defecto_fecha_creacion,
+    defecto_fecha_actualizacion,
+    creador_id,
+    creador_nombre,
+    creador_apellido,
+    asignado_id,
+    asignado_nombre,
+    asignado_apellido,
+    caso_prueba_id,
+    caso_prueba_titulo,
+  } = req.body;
+
+  console.log({
+    defecto_fecha_creacion,
+    creador_nombre,
+    creador_apellido,
+    asignado_nombre,
+    asignado_apellido,
+    caso_prueba_titulo,
+  });
+
+  const query = `
+    UPDATE public.defectos
+    SET 
+      descripcion = $1,
+      estado = $2,
+      prioridad = $3,
+      fecha_actualizacion = $4,
+      creado_por = $5,
+      asignado_a = $6,
+      id_caso_prueba = $7
+    WHERE 
+      id = $8;
+  `;
+
+  const values = [
+    defecto_descripcion,
+    defecto_estado,
+    defecto_prioridad,
+    defecto_fecha_actualizacion,
+    parseInt(creador_id),
+    parseInt(asignado_id),
+    parseInt(caso_prueba_id),
+    defecto_id,
+  ];
+
+  try {
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Defecto no encontrado" });
+    }
+
+    res.status(200).json({ message: "Defecto actualizado exitosamente" });
+  } catch (error) {
+    console.error("Error actualizando el defecto:", error);
+    res.status(500).json({ error: "Error al actualizar el defecto" });
+  }
+};
+
+const deleteDefecto = async (req, res) => {
+  const defectoId = req.body.defecto_id;
+
+  if (!defectoId) {
+    return res
+      .status(400)
+      .json({ error: "El ID del defecto es requerido", data: null });
+  }
+
+  const query = `
+    DELETE FROM public.defectos
+    WHERE id = $1;
+  `;
+
+  try {
+    const result = await pool.query(query, [defectoId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Defecto no encontrado" });
+    }
+
+    res.status(200).json({ message: "Defecto eliminado exitosamente" });
+  } catch (error) {
+    console.error("Error eliminando el defecto:", error);
+    res.status(500).json({ error: "Error al eliminar el defecto" });
+  }
+};
+
+const createDefecto = async (req, res) => {
+  const {
+    descripcion,
+    estado,
+    prioridad,
+    fecha_creacion,
+    creado_por,
+    asignado_a,
+    id_caso_prueba,
+  } = req.body;
+
+  const query = `
+    INSERT INTO public.defectos (
+      descripcion,
+      estado,
+      prioridad,
+      fecha_creacion,
+      creado_por,
+      asignado_a,
+      id_caso_prueba
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7
+    )
+  `;
+
+  const values = [
+    descripcion,
+    estado,
+    prioridad,
+    fecha_creacion,
+    parseInt(creado_por),
+    parseInt(asignado_a),
+    parseInt(id_caso_prueba),
+  ];
+
+  try {
+    const result = await pool.query(query, values);
+
+    res.status(200).json({ message: "Defecto creado exitosamente" });
+  } catch (error) {
+    console.error("Error creando el defecto:", error);
+    res.status(500).json({ error: "Error al crear el defecto" });
+  }
+};
+
+module.exports = {
+  defectosById,
+  getAllDefectos,
+  createDefecto,
+  updateDefecto,
+  deleteDefecto,
+};
+
+module.exports = {
+  defectosById,
+  getAllDefectos,
+  createDefecto,
+  updateDefecto,
+  deleteDefecto,
+  createDefecto,
+};
+
+module.exports = {
+  defectosById,
+  getAllDefectos,
+  updateDefecto,
+  deleteDefecto,
+  createDefecto,
+};

@@ -8,6 +8,7 @@ import Layout from "./components/Layout/Layout";
 import Calendario from "./pages/Calendario/Calendario";
 import CasosPrueba from "./pages/CasosPrueba/CasosPrueba";
 import CasosUso from "./pages/CasosUso/CasosUso";
+import Defectos from "./pages/Defectos/Defectos";
 
 function App() {
   useEffect(() => {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/calendario" element={<Calendario />} />
           <Route path="/casosPrueba" element={<CasosPrueba />} />
           <Route path="/casosUso" element={<CasosUso />} />
+          <Route path="/defectos" element={<Defectos />} />
 
           {/* Route for handling unknown routes */}
           <Route path="*" element={<NotFound />} />
@@ -36,7 +38,7 @@ function App() {
 }
 
 function NotFound() {
-  return <h1>Route not found</h1>;
+  return <h1>Ruta no encontrada</h1>;
 }
 
 export default App;

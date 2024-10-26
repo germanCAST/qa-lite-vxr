@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Header, Pagination } from "../../components";
 
-import { DefectoAllResponse } from "../../types/Proyecto";
+import { CasoPruebaConCasoUso } from "../../types/Proyecto";
 import { Usuario } from "../../types/Usuario";
-import TableSectionDefecto from "../../components/TableSection/TableSectionDefecto";
+import TableSectionCasosPrueba from "../../components/TableSection/TableSectionCasosPrueba";
 
-const Defectos: React.FC = () => {
+const CasosPrueba: React.FC = () => {
   const [user, setUser] = useState<Usuario | null>(null);
-  const [DefectoAllResponse, setDefectoAllResponse] = useState<
-    DefectoAllResponse[]
+  const [CasoPruebaConCasoUso, setCasoPruebaConCasoUso] = useState<
+    CasoPruebaConCasoUso[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -19,16 +19,13 @@ const Defectos: React.FC = () => {
     try {
       setLoading(true);
       const [casosUsoRes] = await Promise.all([
-        fetch("/api/defectos/getAllDefectos"),
+        fetch("/api/casos/getAllCasosPrueba"),
       ]);
 
       if (casosUsoRes.ok) {
         const casosUsoData = await casosUsoRes.json();
-        localStorage.setItem(
-          "casosUsoConProyectoData",
-          JSON.stringify(casosUsoData)
-        );
-        setDefectoAllResponse(casosUsoData);
+        localStorage.setItem("casosUsoData", JSON.stringify(casosUsoData));
+        setCasoPruebaConCasoUso(casosUsoData);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -47,12 +44,12 @@ const Defectos: React.FC = () => {
   }, []);
 
   // Calcular el número total de páginas
-  const totalPages = Math.ceil(DefectoAllResponse.length / itemsPerPage);
+  const totalPages = Math.ceil(CasoPruebaConCasoUso.length / itemsPerPage);
 
   // Calcular los índices de los elementos a mostrar en la página actual
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = DefectoAllResponse.slice(
+  const currentItems = CasoPruebaConCasoUso.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
@@ -82,8 +79,8 @@ const Defectos: React.FC = () => {
           <div className="text-center">Cargando datos...</div>
         ) : (
           <>
-            <TableSectionDefecto
-              defectoAllResponse={currentItems}
+            <TableSectionCasosPrueba
+              CasoPruebaConCasoUso={currentItems}
               fetchAllData={fetchAllData}
             />
             <Pagination
@@ -99,4 +96,4 @@ const Defectos: React.FC = () => {
   );
 };
 
-export default Defectos;
+export default CasosPrueba;

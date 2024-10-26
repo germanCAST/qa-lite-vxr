@@ -37,10 +37,16 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             Casos de Uso
           </Link>
           <Link
-            to="/defecto"
+            to="/defectos"
             className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
           >
             Defectos
+          </Link>
+          <Link
+            to="/usuarios"
+            className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+          >
+            Usuarios
           </Link>
         </nav>
       </div>
