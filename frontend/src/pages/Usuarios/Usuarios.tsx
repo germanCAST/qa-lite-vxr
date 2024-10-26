@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Header, Pagination } from "../../components";
 
-import { CasoPruebaConCasoUso } from "../../types/Proyecto";
+import { CompleteUser } from "../../types/Usuario";
 import { Usuario } from "../../types/Usuario";
-import TableSectionCasosPrueba from "../../components/TableSection/TableSectionCasosPrueba";
+import TableSectionUsuarios from "../../components/TableSection/TableSectionUsuarios";
 
-const CasosPrueba: React.FC = () => {
+const Usuarios: React.FC = () => {
   const [user, setUser] = useState<Usuario | null>(null);
-  const [CasoPruebaConCasoUso, setCasoPruebaConCasoUso] = useState<
-    CasoPruebaConCasoUso[]
-  >([]);
+  const [usuario, setUsuario] = useState<CompleteUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Estado para la paginación
@@ -18,17 +16,26 @@ const CasosPrueba: React.FC = () => {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const [casosUsoRes] = await Promise.all([
-        fetch("/api/casos/getAllCasosPrueba"),
-      ]);
 
-      if (casosUsoRes.ok) {
-        const casosUsoData = await casosUsoRes.json();
-        localStorage.setItem("casosUsoData", JSON.stringify(casosUsoData));
-        setCasoPruebaConCasoUso(casosUsoData);
+      const storedToken = localStorage.getItem("token");
+
+      // Realiza la solicitud usando el método POST y el token en el cuerpo
+      const AllUsuariosRes = await fetch("/api/auth/getCompleteAllUsuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: storedToken!.replace(/^"(.*)"$/, "$1") }),
+      });
+
+      if (AllUsuariosRes.ok) {
+        const completeUser = await AllUsuariosRes.json();
+        localStorage.setItem("AllUsuariosData", JSON.stringify(completeUser));
+        setUsuario(completeUser);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+      alert(`Error al obtener los datos de los usuarios ${error}`);
     } finally {
       setLoading(false);
     }
@@ -36,6 +43,7 @@ const CasosPrueba: React.FC = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+
     if (storedUser) setUser(JSON.parse(storedUser));
 
     console.log(JSON.parse(storedUser!));
@@ -44,15 +52,12 @@ const CasosPrueba: React.FC = () => {
   }, []);
 
   // Calcular el número total de páginas
-  const totalPages = Math.ceil(CasoPruebaConCasoUso.length / itemsPerPage);
+  const totalPages = Math.ceil(usuario.length / itemsPerPage);
 
   // Calcular los índices de los elementos a mostrar en la página actual
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = CasoPruebaConCasoUso.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = usuario.slice(indexOfFirstItem, indexOfLastItem);
 
   // Funciones para cambiar de página
   const goToNextPage = () => {
@@ -79,8 +84,8 @@ const CasosPrueba: React.FC = () => {
           <div className="text-center">Cargando datos...</div>
         ) : (
           <>
-            <TableSectionCasosPrueba
-              CasoPruebaConCasoUso={currentItems}
+            <TableSectionUsuarios
+              completeUser={currentItems}
               fetchAllData={fetchAllData}
             />
             <Pagination
@@ -96,4 +101,4 @@ const CasosPrueba: React.FC = () => {
   );
 };
 
-export default CasosPrueba;
+export default Usuarios;

@@ -9,6 +9,7 @@ import Calendario from "./pages/Calendario/Calendario";
 import CasosPrueba from "./pages/CasosPrueba/CasosPrueba";
 import CasosUso from "./pages/CasosUso/CasosUso";
 import Defectos from "./pages/Defectos/Defectos";
+import Usuarios from "./pages/Usuarios/Usuarios";
 
 function App() {
   useEffect(() => {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/casosPrueba" element={<CasosPrueba />} />
           <Route path="/casosUso" element={<CasosUso />} />
           <Route path="/defectos" element={<Defectos />} />
+          <Route path="/usuarios" element={<Usuarios />} />
 
           {/* Route for handling unknown routes */}
           <Route path="*" element={<NotFound />} />

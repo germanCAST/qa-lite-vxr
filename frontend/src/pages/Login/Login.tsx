@@ -24,10 +24,17 @@ const Login: React.FC = () => {
         const data = await response.json();
         console.log("Data received from server:", data); // Verifica la estructura de la respuesta
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("token", JSON.stringify(data.token));
+
         console.log(
           "User stored in localStorage:",
           localStorage.getItem("user")
         ); // Verifica que se haya almacenado correctamente
+
+        console.log(
+          "User stored in localStorage:",
+          localStorage.getItem("token")
+        );
         navigate("/dashboard");
       } else {
         const data = await response.json();

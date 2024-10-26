@@ -141,7 +141,7 @@ const updateProyecto = async (req, res, next) => {
     fecha_inicio,
     fecha_fin,
     estado,
-    creado_por_id,
+    parseInt(creado_por, 10),
     id,
   ];
 

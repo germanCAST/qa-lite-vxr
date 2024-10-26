@@ -53,7 +53,9 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       <div className="mt-8">
         <div className="flex items-center space-x-4">
           <div>
-            <p className="font-semibold">{user?.name || "Nombre de usuario"}</p>
+            <p className="font-semibold">
+              {user?.name + " " + user?.lastname || "Nombre de usuario"}
+            </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {user?.type || "Tipo de usuario"}
             </p>
